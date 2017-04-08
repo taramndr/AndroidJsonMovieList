@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getMovieListing(){
 
-        RetrofitManager.getInstance().getUpcomingMovieList("943fe7183253884cd7dfa899153695a0", new Callback<MovieListing>(){ //BuildConfig.TMDBMOVIEAPIKEY
+        RetrofitManager.getInstance().getUpcomingMovieList("your_api_key", new Callback<MovieListing>(){ //BuildConfig.TMDBMOVIEAPIKEY
 
             @Override
             public void onResponse(Call<MovieListing> call, Response<MovieListing> response) {
