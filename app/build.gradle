@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        //buildConfigField 'String', 'TMDBMOVIEAPIKEY', "943fe7183253884cd7dfa899153695a0"
+        buildConfigField 'String', 'TMDBMOVIEAPIKEY', TMDBMOVIEAPIKEY
     }
     buildTypes {
         release {
