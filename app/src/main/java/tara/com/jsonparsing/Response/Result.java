@@ -1,5 +1,8 @@
 package tara.com.jsonparsing.Response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -9,10 +12,10 @@ import java.util.List;
  * Created by Tara on 06-Apr-17.
  */
 
-public class Result {
+public class Result implements Parcelable {
 
     @SerializedName("poster_path")
-    private Object posterPath;
+    private String posterPath;
 
     @SerializedName("adult")
     private Boolean adult;
@@ -39,7 +42,7 @@ public class Result {
     private String title;
 
     @SerializedName("backdrop_path")
-    private Object backdropPath;
+    private String backdropPath;
 
     @SerializedName("popularity")
     private Double popularity;
@@ -48,20 +51,41 @@ public class Result {
     private Integer voteCount;
 
     @SerializedName("video")
-    private boolean video;
+    private Boolean video;
 
     @SerializedName("vote_average")
-    private float voteAverage;
+    private Float voteAverage;
 
-    protected Result(){
-
+    protected Result(Parcel in) {
+        overview = in.readString();
+        releaseDate = in.readString();
+        originalTitle = in.readString();
+        originalLanguage = in.readString();
+        title = in.readString();
+        video = in.readByte() != 0;
+        voteAverage = in.readFloat();
+        posterPath = in.readString();
+        backdropPath = in.readString();
+        popularity = in.readDouble();
+        voteCount = in.readInt();
+        id = in.readInt();
     }
 
-    public Object getPosterPath() {
-        return posterPath;
-    }
+    public static final Creator<Result> CREATOR = new Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
 
-    public void setPosterPath(Object posterPath) {
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
+
+    public String getPosterPath() { return posterPath; }
+
+    public void setPosterPath(String posterPath) {
         this.posterPath = posterPath;
     }
 
@@ -126,10 +150,10 @@ public class Result {
     public void setTitle(String title) {
         this.title = title;
     }
-    public Object getBackdropPath() {
+    public String getBackdropPath() {
         return backdropPath;
     }
-    public void setBackdropPath(Object backdropPath) {
+    public void setBackdropPath(String backdropPath) {
         this.backdropPath = backdropPath;
     }
     public Double getPopularity() {
@@ -161,5 +185,26 @@ public class Result {
 
     public void setVoteAverage(float voteAverage) {
         this.voteAverage = voteAverage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+        dest.writeString(originalTitle);
+        dest.writeString(originalLanguage);
+        dest.writeString(title);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeFloat(voteAverage);
+        dest.writeString(posterPath);
+        dest.writeString(backdropPath);
+        dest.writeDouble(popularity);
+        dest.writeInt(voteCount);
+        dest.writeInt(id);
     }
 }

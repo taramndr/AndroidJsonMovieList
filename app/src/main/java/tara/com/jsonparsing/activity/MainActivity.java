@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ import static tara.com.jsonparsing.rest.RetrofitManager.getUpcomingMovieList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private final static String TAG = MainActivity.class.getSimpleName();
     private ArrayList<Result> upcomingMovieList = new ArrayList<>();
     private MovieListingAdapter mListAdapter;
     private RecyclerView rvMovieLayout;
@@ -36,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(TextUtils.isEmpty(BuildConfig.TMDBMOVIEAPIKEY)){
+            Toast.makeText(MainActivity.this, "API Key is required for further operation.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         rvMovieLayout = (RecyclerView) findViewById(R.id.rv_movie_listing);
 
 //        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -43,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this); // it says recycle view to be Linear List
         rvMovieLayout.setLayoutManager(linearLayoutManager);
-
 
         getMovieListing();
         mListAdapter = new MovieListingAdapter(MainActivity.this, upcomingMovieList);
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getMovieListing(){
 
-        RetrofitManager.getInstance().getUpcomingMovieList("your_api_key", new Callback<MovieListing>(){ //BuildConfig.TMDBMOVIEAPIKEY
+        RetrofitManager.getInstance().getUpcomingMovieList(BuildConfig.TMDBMOVIEAPIKEY, new Callback<MovieListing>() {
 
             @Override
             public void onResponse(Call<MovieListing> call, Response<MovieListing> response) {
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     updateMovies(response);
                 }
                 else{
-                    Log.i(TAG, "onResponse: " + response);
+                    Log.i(TAG, "onResponse: " + response.message());
                     Toast.makeText(MainActivity.this, response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -81,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         mListAdapter.setClickListener(new MovieListingAdapter.MovieItemClickListener(){
             @Override
             public void onClick(Result result) {
+                Log.i(TAG, "onClickItem: ");
                 startActivity(DetailActivity.getLaunchIntent(MainActivity.this, result));
             }
         });
