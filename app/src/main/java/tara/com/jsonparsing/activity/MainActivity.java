@@ -1,6 +1,9 @@
 package tara.com.jsonparsing.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        //Check for Network Connection
+        if ( !isNetworkAvailable() ){
+            noInternetAlertMessage();
+        }
 
         if(TextUtils.isEmpty(BuildConfig.TMDBMOVIEAPIKEY)){
             Toast.makeText(MainActivity.this, "API Key is required for further operation.", Toast.LENGTH_SHORT).show();
@@ -54,6 +62,23 @@ public class MainActivity extends AppCompatActivity {
         mListAdapter = new MovieListingAdapter(MainActivity.this, upcomingMovieList);
         rvMovieLayout.setAdapter(mListAdapter);
 
+    }
+
+    private void noInternetAlertMessage() {
+       // NoInternetConnectionDialog dialog = new NoInternet
+        Toast.makeText(MainActivity.this, "No Connection", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+
+        if(networkInfo != null && networkInfo.isConnected()){
+            isAvailable = true;
+        }
+
+        return isAvailable;
     }
 
     private void getMovieListing(){
